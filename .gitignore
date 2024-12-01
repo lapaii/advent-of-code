@@ -1,0 +1,5 @@
+# puzzle inputs
+*.txt
+
+# node modules
+node_modules
