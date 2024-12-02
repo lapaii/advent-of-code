@@ -1,28 +1,31 @@
-const input = await Bun.file("day-2.txt").text();
+import { check } from "./shared";
+
+const input = (await Bun.file("day-2.txt").text()).trim();
 const reports = input.split("\n");
 
-let safeCount = 0;
+let answerp1 = 0;
+let answerp2 = 0;
+
 for (const report of reports) {
   const levels: Array<number> = report.split(" ").map(Number);
 
-  // check if all increasing or decreasing
-  const differences: Array<number> = [];
-  for (let index = 0; index < levels.length - 1; index++) {
-    differences.push(levels[index] - levels[index + 1]);
-  }
-
-  const sortedDifferences = differences.toSorted((a, b) => a - b);
-  if (!(sortedDifferences[0] > 0 === sortedDifferences[sortedDifferences.length - 1] > 0)) {
+  let failure;
+  failure = check(levels);
+  if (!failure) {
+    answerp1 += 1;
+    answerp2 += 1;
     continue;
   }
 
-  // now check if the differences are within the correct range or not
-  const absSortedDiff = sortedDifferences.map((value) => Math.abs(value)).sort((a, b) => a - b);
-  if (absSortedDiff[0] < 1 || absSortedDiff[absSortedDiff.length - 1] > 3) {
-    continue;
+  failure = false;
+  for (let index = 0; index < levels.length; index++) {
+    const partial = levels.toSpliced(index, 1);
+    failure = check(partial);
+    if (!failure) break;
   }
 
-  safeCount += 1;
+  if (!failure) answerp2 += 1;
 }
 
-console.log(`safe count: ${safeCount}`);
+console.log(`answer part 1: ${answerp1}`);
+console.log(`answer part 2: ${answerp2}`);
